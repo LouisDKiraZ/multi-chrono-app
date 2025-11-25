@@ -1,0 +1,210 @@
+:root {
+    /* --- SIZE VARIABLES --- */
+    --header-height: 80px;
+    --btn-size-standard: 50px;
+    --btn-size-large: 80px;
+    --font-size-timer: 6rem;
+    --font-size-title: 1.5rem;
+    --font-size-header-btn: 1.2rem;
+    --timer-gap: 2px;
+    
+    /* --- COLORS --- */
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --btn-bg: #ffffff;
+    --btn-text: #000000;
+    --btn-disabled: #555555;
+    --active-timer-base: #ffffff; 
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    user-select: none;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- HEADER --- */
+#app-header {
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #111;
+    border-bottom: 1px solid #333;
+    z-index: 10;
+}
+
+.header-btn {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-header-btn);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s;
+}
+
+.header-btn:hover {
+    transform: scale(1.1);
+}
+
+.header-btn:active {
+    transform: scale(0.95);
+}
+
+.header-btn.round {
+    width: var(--btn-size-standard);
+    height: var(--btn-size-standard);
+    border-radius: 50%;
+}
+
+.header-btn.large {
+    width: calc(var(--btn-size-large) * 2);
+    height: var(--btn-size-large);
+    border-radius: 10px;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+}
+
+.header-btn:disabled {
+    background-color: var(--btn-disabled);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Color Button Indicator */
+#btn-color {
+    background-color: var(--active-timer-base); 
+    border: 2px solid #fff;
+}
+#color-picker {
+    position: absolute;
+    opacity: 0; 
+    width: 0; 
+    height: 0;
+}
+
+/* --- TIMERS SECTION --- */
+#timers-container {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.timer-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: flex 0.3s ease, background 0.5s ease, color 0.3s ease;
+    border-right: 1px solid #222;
+    overflow: hidden;
+    background: black; 
+    color: white;
+}
+
+.timer-panel:last-child {
+    border-right: none;
+}
+
+.timer-panel.active {
+    background: radial-gradient(circle, var(--active-timer-base) 0%, black 90%);
+}
+
+.timer-title {
+    font-size: var(--font-size-title);
+    margin-bottom: 10px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    text-align: center;
+    width: 80%;
+    outline: none;
+    border-bottom: 1px solid transparent;
+}
+
+.timer-title:focus {
+    border-bottom: 1px solid currentColor;
+}
+
+/* --- TIMER DISPLAY & CONTROLS --- */
+.timer-display-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.timer-display {
+    font-size: var(--font-size-timer);
+    font-weight: bold;
+    line-height: 1;
+}
+
+.timer-controls {
+    display: flex;
+    flex-direction: column;
+    margin-left: 15px;
+    gap: 5px;
+}
+
+.btn-adjust {
+    background: transparent;
+    border: none;
+    color: inherit; /* Inherits parent color (white or active theme) */
+    font-size: 2.5rem;
+    cursor: pointer;
+    line-height: 0.8;
+    opacity: 0.5;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-adjust:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.btn-adjust:active {
+    transform: scale(0.9);
+}
+
+/* --- SOUND BUTTON --- */
+.btn-sound {
+    background: transparent;
+    border: 2px solid currentColor;
+    color: currentColor;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    margin-top: 15px;
+}
+
+.btn-sound:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}

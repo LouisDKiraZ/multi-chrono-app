@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Timer App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="app-header">
+        <!-- Volume Toggle -->
+        <button id="btn-volume" class="header-btn round" title="Toggle Sound">
+            <span id="icon-volume">🔊</span>
+        </button>
+
+        <!-- Remove Timer -->
+        <button id="btn-remove" class="header-btn round" title="Remove Last Timer">-</button>
+
+        <!-- Start/Stop (Main Control) -->
+        <button id="btn-start-stop" class="header-btn large" title="Start/Stop">START</button>
+
+        <!-- Add Timer -->
+        <button id="btn-add" class="header-btn round" title="Add New Timer">+</button>
+
+        <!-- Color Picker -->
+        <div class="color-wrapper">
+            <input type="color" id="color-picker" value="#ffffff">
+            <button id="btn-color" class="header-btn round" title="Select Color"></button>
+        </div>
+    </header>
+
+    <main id="timers-container">
+        <!-- Timers will be injected here by JavaScript -->
+    </main>
+
+    <!-- Hidden file input for custom sounds -->
+    <input type="file" id="global-sound-input" accept="audio/*" style="display: none;">
+
+    <script src="script.js"></script>
+</body>
+</html>
