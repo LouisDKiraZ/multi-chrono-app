@@ -3,14 +3,13 @@ class TimerApp {
         // Configuration
         this.maxTimers = 5;
         this.defaultColor = '#ff0000ff';
-        this.defaultSoundPath = 'assets/beep.mp3'; // Path to default asset
+        this.defaultSoundPath = 'assets/beep-beep.mp3'; // Default pleasant beep-beep sound
         
         this.timers = []; // Array of timer objects
         this.currentTimerIndex = 0;
         this.isRunning = false;
         this.isSoundEnabled = true;
         this.globalInterval = null;
-        this.currentColor = this.defaultColor;
 
         // Rapid Scroll Variables
         this.adjustInterval = null;
@@ -23,8 +22,6 @@ class TimerApp {
         this.btnStartStop = document.getElementById('btn-start-stop');
         this.btnVolume = document.getElementById('btn-volume');
         this.iconVolume = document.getElementById('icon-volume');
-        this.btnColor = document.getElementById('btn-color');
-        this.colorPicker = document.getElementById('color-picker');
         this.globalSoundInput = document.getElementById('global-sound-input');
 
         this.tempSoundTargetIndex = null;
@@ -41,14 +38,6 @@ class TimerApp {
         this.btnRemove.addEventListener('click', () => this.removeTimer());
         this.btnStartStop.addEventListener('click', () => this.toggleStartStop());
         this.btnVolume.addEventListener('click', () => this.toggleVolume());
-        
-        // Color Picker
-        this.btnColor.addEventListener('click', () => this.colorPicker.click());
-        this.colorPicker.addEventListener('input', (e) => {
-            this.currentColor = e.target.value;
-            this.btnColor.style.backgroundColor = this.currentColor;
-            this.updateActiveTimerColor();
-        });
 
         // Sound File Selection
         this.globalSoundInput.addEventListener('change', (e) => {
@@ -81,7 +70,8 @@ class TimerApp {
             title: `Timer ${this.timers.length + 1}`,
             duration: 10, // default seconds
             remaining: 10,
-            soundSrc: initialSound
+            soundSrc: initialSound,
+            color: this.defaultColor
         };
 
         this.timers.push(timerObj);
@@ -90,7 +80,8 @@ class TimerApp {
     }
 
     removeTimer() {
-        if (this.timers.length <= 0) return;
+        // Must always keep at least one timer
+        if (this.timers.length <= 1) return;
         this.timers.pop();
         
         // If we removed the currently running timer
@@ -197,10 +188,6 @@ class TimerApp {
         }
 
         const timer = this.timers[index];
-        // Adjust Duration (and remaining if currently full/reset)
-        // Requirement says "increase/decrease number". usually implies modifying the set duration AND current remaining
-        // For simplicity in this UX, we modify 'remaining' directly, and update 'duration' to match
-        // so next time it resets, it keeps this new value.
         
         let newVal = timer.remaining + amount;
         if (newVal < 1) newVal = 1; // Minimum 1 second
@@ -212,13 +199,12 @@ class TimerApp {
     }
 
     updateActiveTimerColor() {
-        document.documentElement.style.setProperty('--active-timer-base', this.currentColor);
-        
         const panels = document.querySelectorAll('.timer-panel');
         panels.forEach((panel, idx) => {
+            const panelColor = this.timers[idx]?.color || this.defaultColor;
             if (idx === this.currentTimerIndex) {
                 panel.classList.add('active');
-                panel.style.background = `radial-gradient(circle, ${this.currentColor} 0%, black 100%)`;
+                panel.style.background = `radial-gradient(circle, ${panelColor} 0%, black 100%)`;
             } else {
                 panel.classList.remove('active');
                 panel.style.background = 'black';
@@ -257,7 +243,6 @@ class TimerApp {
             const btnUp = document.createElement('button');
             btnUp.className = 'btn-adjust';
             btnUp.innerText = '▲';
-            // Mouse/Touch events for Hold
             btnUp.addEventListener('mousedown', () => this.startAdjusting(index, 1));
             
             const btnDown = document.createElement('button');
@@ -271,19 +256,45 @@ class TimerApp {
             displayContainer.appendChild(display);
             displayContainer.appendChild(controls);
 
+            // Bottom actions row (sound + color)
+            const actions = document.createElement('div');
+            actions.className = 'timer-actions';
+
             // Sound Button
             const btnSound = document.createElement('button');
             btnSound.className = 'btn-sound';
             btnSound.innerText = '🎵'; 
-            btnSound.title = "Change Sound";
+            btnSound.title = 'Change Sound';
             btnSound.onclick = () => {
                 this.tempSoundTargetIndex = index;
                 this.globalSoundInput.click();
             };
 
+            // Color Button + hidden color input (per timer)
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.className = 'timer-color-input';
+            colorInput.value = timer.color || this.defaultColor;
+            colorInput.addEventListener('input', (e) => {
+                timer.color = e.target.value;
+                btnColor.style.backgroundColor = timer.color;
+                this.updateActiveTimerColor();
+            });
+
+            const btnColor = document.createElement('button');
+            btnColor.className = 'btn-color';
+            btnColor.title = 'Change Color';
+            btnColor.style.backgroundColor = timer.color || this.defaultColor;
+            btnColor.innerText = '🎨';
+            btnColor.onclick = () => colorInput.click();
+
+            actions.appendChild(btnSound);
+            actions.appendChild(btnColor);
+            actions.appendChild(colorInput);
+
             el.appendChild(titleInput);
             el.appendChild(displayContainer);
-            el.appendChild(btnSound);
+            el.appendChild(actions);
 
             this.container.appendChild(el);
         });
@@ -300,7 +311,7 @@ class TimerApp {
 
     updateUI() {
         this.btnAdd.disabled = this.timers.length >= this.maxTimers;
-        this.btnRemove.disabled = this.timers.length <= 0;
+        this.btnRemove.disabled = this.timers.length <= 1;
         
         this.btnAdd.style.backgroundColor = this.btnAdd.disabled ? 'grey' : 'white';
         this.btnRemove.style.backgroundColor = this.btnRemove.disabled ? 'grey' : 'white';
